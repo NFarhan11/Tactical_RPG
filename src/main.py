@@ -1,7 +1,7 @@
 from settings import *
-from grid import Grid, Tile
+from grid import Grid
 from player import Player
-from pytmx import load_pygame
+from camera import CameraGroup
 
 
 class Game:
@@ -11,18 +11,13 @@ class Game:
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 		self.clock = pygame.time.Clock()
 
+		# Camera
+		self.camera_group = CameraGroup()
+		self.camera_group.zoom_scale = 1.75
+
 		# Sprites
 		self.grid = Grid(WIDTH, HEIGHT)
-		self.player = Player((5, 5))
-		self.all_sprites = pygame.sprite.Group()
-		# cycle through all layers
-		tmx_data = load_pygame("../assets/map/basic.tmx")
-		for layer in tmx_data.visible_layers:  # visible layers
-			if hasattr(layer, "data"):  # contains a data
-				for x, y, surf in layer.tiles():
-					pos = (x * 16, y * 16)
-					Tile(pos, surf, self.all_sprites)
-		self.all_sprites.add(self.player)
+		self.player = Player((5, 5), self.camera_group)
 
 	def input(self):
 		for event in pygame.event.get():
@@ -45,12 +40,12 @@ class Game:
 			self.player.move((0, 1))  # move down
 
 	def update(self):
-		pass
+		self.camera_group.update()
 
 	def render(self):
 		self.screen.fill(BG_COLOR)
 		self.grid.draw(self.screen)
-		self.all_sprites.draw(self.screen)
+		self.camera_group.custom_draw(self.player)
 
 	def run(self):
 		while True:

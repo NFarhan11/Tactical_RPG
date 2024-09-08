@@ -1,8 +1,8 @@
 from settings import pygame, GRID_SIZE
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self, pos):
-		super().__init__()
+	def __init__(self, pos, groups):
+		super().__init__(groups)
 		self.image = pygame.Surface((GRID_SIZE, GRID_SIZE))
 		self.image.fill("chartreuse4")
 		self.rect = self.image.get_frect()
